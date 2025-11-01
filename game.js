@@ -193,10 +193,10 @@ function showResults(playerChoice) {
     let outcomeClass;
 
     if (playerChoice === 'abstain') {
-        outcomeText = `<h3>😔 投票しなかった結果...</h3><p>${scenario.outcomes.abstain}</p>`;
+        outcomeText = `<h3><i class="fas fa-face-frown"></i> 投票しなかった結果...</h3><p>${scenario.outcomes.abstain}</p>`;
         outcomeClass = 'bad';
     } else {
-        outcomeText = `<h3>🎉 ${winner === playerChoice ? '選んだ候補が当選！' : '残念、別の候補が当選...'}</h3><p>${scenario.outcomes[winner]}</p>`;
+        outcomeText = `<h3><i class="fas fa-trophy"></i> ${winner === playerChoice ? '選んだ候補が当選！' : '残念、別の候補が当選...'}</h3><p>${scenario.outcomes[winner]}</p>`;
         outcomeClass = winner === playerChoice ? 'good' : 'neutral';
     }
 
@@ -205,8 +205,8 @@ function showResults(playerChoice) {
 
     // Display stats
     document.getElementById('turnout-rate').textContent = turnoutRate.toFixed(1) + '%';
-    document.getElementById('your-votes').textContent = votingHistory.map(v => {
-        if (v === 'abstain') return '❌';
+    document.getElementById('your-votes').innerHTML = votingHistory.map(v => {
+        if (v === 'abstain') return '<i class="fas fa-xmark"></i>';
         return v;
     }).join(', ');
 
@@ -239,7 +239,7 @@ function showFinalScreen() {
     if (votedCount === totalRounds) {
         finalMessage = `
             <div class="outcome-message good">
-                <h3>🌟 素晴らしい！</h3>
+                <h3><i class="fas fa-star"></i> 素晴らしい！</h3>
                 <p>あなたは全てのラウンドで投票しました！</p>
                 <p>投票することで、社会に参加し、未来を作ることができます。</p>
                 <p><strong>実際の選挙でも、ぜひ投票に行ってください！</strong></p>
@@ -248,7 +248,7 @@ function showFinalScreen() {
     } else if (votedCount > 0) {
         finalMessage = `
             <div class="outcome-message neutral">
-                <h3>👍 良い判断！</h3>
+                <h3><i class="fas fa-thumbs-up"></i> 良い判断！</h3>
                 <p>あなたは${votedCount}/${totalRounds}回投票しました。</p>
                 <p>投票することで、あなたの声を届けることができます。</p>
                 <p><strong>次はすべての選挙で投票してみましょう！</strong></p>
@@ -257,7 +257,7 @@ function showFinalScreen() {
     } else {
         finalMessage = `
             <div class="outcome-message bad">
-                <h3>😢 残念...</h3>
+                <h3><i class="fas fa-face-sad-tear"></i> 残念...</h3>
                 <p>あなたは一度も投票しませんでした。</p>
                 <p>投票しないと、あなたの意見は政治に反映されません。</p>
                 <p><strong>次は勇気を出して投票してみましょう！</strong></p>
