@@ -130,18 +130,15 @@ function showResults(playerChoice) {
     // Simulate other voters
     // If player abstains, turnout is low (30-40%)
     // If player votes, turnout is higher (60-70%)
-    let turnoutRate;
     let candidateAVotes, candidateBVotes, abstainVotes;
     
     if (playerChoice === 'abstain') {
         // Low turnout scenario
-        turnoutRate = 30 + Math.random() * 10;
         candidateAVotes = 20 + Math.random() * 15;
         candidateBVotes = 10 + Math.random() * 10;
         abstainVotes = 100 - candidateAVotes - candidateBVotes;
     } else {
         // Higher turnout
-        turnoutRate = 60 + Math.random() * 10;
         if (playerChoice === 'A') {
             candidateAVotes = 30 + Math.random() * 10;
             candidateBVotes = 25 + Math.random() * 10;
@@ -152,13 +149,11 @@ function showResults(playerChoice) {
         abstainVotes = 100 - candidateAVotes - candidateBVotes;
     }
 
+    // Calculate turnout rate from actual votes
+    const turnoutRate = candidateAVotes + candidateBVotes;
+
     // Determine winner
-    let winner;
-    if (playerChoice === 'abstain' || abstainVotes > 50) {
-        winner = candidateAVotes > candidateBVotes ? 'A' : 'B';
-    } else {
-        winner = candidateAVotes > candidateBVotes ? 'A' : 'B';
-    }
+    const winner = candidateAVotes > candidateBVotes ? 'A' : 'B';
 
     // Display results
     const resultDetails = document.getElementById('result-details');
