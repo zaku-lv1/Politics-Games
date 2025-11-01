@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選挙ゲーム - あなたの一票が未来を変える！</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗳️ 選挙ゲーム</h1>
+            <p class="subtitle">あなたの一票が未来を変える！</p>
+        </header>
+
+        <div id="intro-screen" class="screen active">
+            <div class="intro-content">
+                <h2>ようこそ！</h2>
+                <p>このゲームでは、架空の町の町長選挙に参加します。</p>
+                <p>候補者の政策を見て、あなたの一票を投じましょう！</p>
+                <p>投票率が低いと、どうなるか見てみましょう...</p>
+                <button onclick="startGame()" class="btn btn-primary">ゲームを始める</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="round-info">
+                <h3>ラウンド <span id="round-number">1</span>/3</h3>
+                <p id="scenario-description"></p>
+            </div>
+
+            <div class="candidates-container">
+                <div class="candidate" id="candidate-a">
+                    <div class="candidate-header">
+                        <h3>候補者A</h3>
+                        <span class="candidate-icon">👔</span>
+                    </div>
+                    <div class="candidate-info">
+                        <h4>政策：</h4>
+                        <ul id="candidate-a-policies"></ul>
+                    </div>
+                    <button onclick="vote('A')" class="btn btn-vote">Aに投票する</button>
+                </div>
+
+                <div class="candidate" id="candidate-b">
+                    <div class="candidate-header">
+                        <h3>候補者B</h3>
+                        <span class="candidate-icon">🎓</span>
+                    </div>
+                    <div class="candidate-info">
+                        <h4>政策：</h4>
+                        <ul id="candidate-b-policies"></ul>
+                    </div>
+                    <button onclick="vote('B')" class="btn btn-vote">Bに投票する</button>
+                </div>
+
+                <div class="candidate abstain">
+                    <div class="candidate-header">
+                        <h3>投票しない</h3>
+                        <span class="candidate-icon">😴</span>
+                    </div>
+                    <div class="candidate-info">
+                        <p>「忙しいから」「どうせ変わらないから」と投票に行かない...</p>
+                        <p class="warning">⚠️ でも、それで本当にいいの？</p>
+                    </div>
+                    <button onclick="vote('abstain')" class="btn btn-abstain">投票しない</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="result-content">
+                <h2>選挙結果</h2>
+                <div id="result-details"></div>
+                <div id="outcome-message"></div>
+                <div class="stats">
+                    <h3>統計</h3>
+                    <p>投票率: <span id="turnout-rate"></span></p>
+                    <p>あなたの投票: <span id="your-votes"></span></p>
+                </div>
+                <button onclick="nextRound()" class="btn btn-primary" id="next-btn">次のラウンドへ</button>
+            </div>
+        </div>
+
+        <div id="final-screen" class="screen">
+            <div class="final-content">
+                <h2>🎉 ゲーム終了！</h2>
+                <div id="final-message"></div>
+                <div class="lesson">
+                    <h3>💡 学んだこと</h3>
+                    <p><strong>あなたの一票は本当に大切です！</strong></p>
+                    <ul>
+                        <li>投票率が低いと、少数の人の意見だけで決まってしまう</li>
+                        <li>「一票くらい」と思う人が多いと、大きな差になる</li>
+                        <li>若者が投票しないと、若者向けの政策が実現しにくい</li>
+                        <li>選挙に参加することで、社会を変えることができる</li>
+                    </ul>
+                </div>
+                <div class="cta">
+                    <h3>実際の選挙に行こう！</h3>
+                    <p>18歳以上なら、実際の選挙に参加できます。</p>
+                    <p>あなたの一票で、未来を作ろう！</p>
+                </div>
+                <button onclick="restartGame()" class="btn btn-primary">もう一度プレイ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
