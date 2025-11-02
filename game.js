@@ -520,8 +520,8 @@ function showFinalScreen() {
                 <p><strong>次は勇気を出して投票してみましょう！</strong></p>
             </div>
         `;
-    } else if (votedCount < 3) {
-        // 中途半端エンド - Voted only 1-2 times
+    } else if (votedCount < Math.ceil(totalRounds * 0.6)) {
+        // 中途半端エンド - Voted less than 60% of rounds
         endingType = '中途半端エンド';
         endingClass = 'neutral';
         finalMessage = `
@@ -540,7 +540,7 @@ function showFinalScreen() {
             .reduce((a, b) => ideologyCounts[a] > ideologyCounts[b] ? a : b);
         
         const maxCount = ideologyCounts[maxIdeology];
-        const hasConsistentChoice = maxCount >= 3; // 3回以上同じイデオロギーに投票
+        const hasConsistentChoice = maxCount >= Math.ceil(totalRounds * 0.6); // 60% or more of rounds
         
         if (hasConsistentChoice) {
             // 特定のイデオロギーに一貫して投票した場合の専用エンディング
