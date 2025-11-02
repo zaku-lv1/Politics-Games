@@ -3,7 +3,16 @@ let currentRound = 0;
 let votingHistory = [];
 let gameScenarios = [];
 let allScenarios = [];
-let partyScores = {}; // Track how many votes each party got
+
+// Fisher-Yates shuffle algorithm for proper randomization
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 // Define all political parties
 const POLITICAL_PARTIES = [
@@ -179,8 +188,8 @@ function initializeAllScenarios() {
 function initializeScenarios() {
     initializeAllScenarios();
     
-    // Shuffle and select 3 random scenarios
-    const shuffled = [...allScenarios].sort(() => Math.random() - 0.5);
+    // Shuffle and select 3 random scenarios using Fisher-Yates
+    const shuffled = shuffleArray(allScenarios);
     gameScenarios = shuffled.slice(0, 3);
 }
 
@@ -188,7 +197,6 @@ function startGame() {
     initializeScenarios();
     currentRound = 0;
     votingHistory = [];
-    partyScores = {};
     showScreen('game-screen');
     loadRound();
 }
@@ -205,17 +213,17 @@ function selectPartiesForRound() {
     
     if (includeBadParty && badParties.length > 0) {
         // Select 2 good parties and 1 bad party
-        const shuffledGood = [...goodParties].sort(() => Math.random() - 0.5);
-        const shuffledBad = [...badParties].sort(() => Math.random() - 0.5);
+        const shuffledGood = shuffleArray(goodParties);
+        const shuffledBad = shuffleArray(badParties);
         selectedParties = [...shuffledGood.slice(0, 2), shuffledBad[0]];
     } else {
         // Select 3 good parties
-        const shuffledGood = [...goodParties].sort(() => Math.random() - 0.5);
+        const shuffledGood = shuffleArray(goodParties);
         selectedParties = shuffledGood.slice(0, 3);
     }
     
     // Shuffle final selection
-    return selectedParties.sort(() => Math.random() - 0.5);
+    return shuffleArray(selectedParties);
 }
 
 function showScreen(screenId) {
@@ -288,12 +296,6 @@ function loadRound() {
 
 function vote(choice) {
     votingHistory.push(choice);
-    
-    // Track party scores
-    if (choice !== 'abstain') {
-        partyScores[choice] = (partyScores[choice] || 0) + 1;
-    }
-    
     showResults(choice);
 }
 
