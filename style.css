@@ -160,10 +160,18 @@ h1 {
     transition: all 0.3s;
 }
 
+.candidate.party-card {
+    border-left-width: 8px;
+}
+
 .candidate:hover {
     border-color: #667eea;
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
     transform: translateY(-5px);
+}
+
+.candidate.party-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .candidate.abstain {
@@ -279,6 +287,21 @@ h1 {
     background: #d4edda;
     border: 2px solid #4CAF50;
     color: #155724;
+}
+
+#outcome-message.good.happy-end {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    border: 3px solid #f39c12;
+    color: #2d3436;
+    box-shadow: 0 5px 20px rgba(243, 156, 18, 0.3);
+}
+
+#outcome-message.good.happy-end .highlight {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #d63031;
+    text-align: center;
+    margin: 20px 0;
 }
 
 #outcome-message.bad {

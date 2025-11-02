@@ -17,9 +17,9 @@
         <div id="intro-screen" class="screen active">
             <div class="intro-content">
                 <h2>ようこそ！</h2>
-                <p>このゲームでは、架空の町の町長選挙に参加します。</p>
-                <p>候補者の政策を見て、あなたの一票を投じましょう！</p>
-                <p>投票率が低いと、どうなるか見てみましょう...</p>
+                <p>このゲームでは、架空の町の選挙に参加します。</p>
+                <p>政党の政策を見て、比例代表制であなたの一票を投じましょう！</p>
+                <p>投票率が低いと、危険な政党が台頭するかも...</p>
                 <button onclick="startGame()" class="btn btn-primary">ゲームを始める</button>
             </div>
         </div>
@@ -31,41 +31,7 @@
             </div>
 
             <div class="candidates-container">
-                <div class="candidate" id="candidate-a">
-                    <div class="candidate-header">
-                        <h3>候補者A</h3>
-                        <span class="candidate-icon"><i class="fas fa-user-tie"></i></span>
-                    </div>
-                    <div class="candidate-info">
-                        <h4>政策：</h4>
-                        <ul id="candidate-a-policies"></ul>
-                    </div>
-                    <button onclick="vote('A')" class="btn btn-vote">Aに投票する</button>
-                </div>
-
-                <div class="candidate" id="candidate-b">
-                    <div class="candidate-header">
-                        <h3>候補者B</h3>
-                        <span class="candidate-icon"><i class="fas fa-graduation-cap"></i></span>
-                    </div>
-                    <div class="candidate-info">
-                        <h4>政策：</h4>
-                        <ul id="candidate-b-policies"></ul>
-                    </div>
-                    <button onclick="vote('B')" class="btn btn-vote">Bに投票する</button>
-                </div>
-
-                <div class="candidate abstain">
-                    <div class="candidate-header">
-                        <h3>投票しない</h3>
-                        <span class="candidate-icon"><i class="fas fa-bed"></i></span>
-                    </div>
-                    <div class="candidate-info">
-                        <p>「忙しいから」「どうせ変わらないから」と投票に行かない...</p>
-                        <p class="warning"><i class="fas fa-exclamation-triangle"></i> でも、それで本当にいいの？</p>
-                    </div>
-                    <button onclick="vote('abstain')" class="btn btn-abstain">投票しない</button>
-                </div>
+                <!-- Parties will be dynamically loaded here -->
             </div>
         </div>
 
