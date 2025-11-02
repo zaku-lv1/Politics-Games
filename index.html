@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>選挙ゲーム - あなたの一票が未来を変える！</title>
+    <link rel="stylesheet" href="fontawesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🗳️ 選挙ゲーム</h1>
+            <h1><i class="fas fa-check-to-slot"></i> 選挙ゲーム</h1>
             <p class="subtitle">あなたの一票が未来を変える！</p>
         </header>
 
@@ -33,7 +34,7 @@
                 <div class="candidate" id="candidate-a">
                     <div class="candidate-header">
                         <h3>候補者A</h3>
-                        <span class="candidate-icon">👔</span>
+                        <span class="candidate-icon"><i class="fas fa-user-tie"></i></span>
                     </div>
                     <div class="candidate-info">
                         <h4>政策：</h4>
@@ -45,7 +46,7 @@
                 <div class="candidate" id="candidate-b">
                     <div class="candidate-header">
                         <h3>候補者B</h3>
-                        <span class="candidate-icon">🎓</span>
+                        <span class="candidate-icon"><i class="fas fa-graduation-cap"></i></span>
                     </div>
                     <div class="candidate-info">
                         <h4>政策：</h4>
@@ -57,11 +58,11 @@
                 <div class="candidate abstain">
                     <div class="candidate-header">
                         <h3>投票しない</h3>
-                        <span class="candidate-icon">😴</span>
+                        <span class="candidate-icon"><i class="fas fa-bed"></i></span>
                     </div>
                     <div class="candidate-info">
                         <p>「忙しいから」「どうせ変わらないから」と投票に行かない...</p>
-                        <p class="warning">⚠️ でも、それで本当にいいの？</p>
+                        <p class="warning"><i class="fas fa-exclamation-triangle"></i> でも、それで本当にいいの？</p>
                     </div>
                     <button onclick="vote('abstain')" class="btn btn-abstain">投票しない</button>
                 </div>
@@ -84,10 +85,10 @@
 
         <div id="final-screen" class="screen">
             <div class="final-content">
-                <h2>🎉 ゲーム終了！</h2>
+                <h2><i class="fas fa-trophy"></i> ゲーム終了！</h2>
                 <div id="final-message"></div>
                 <div class="lesson">
-                    <h3>💡 学んだこと</h3>
+                    <h3><i class="fas fa-lightbulb"></i> 学んだこと</h3>
                     <p><strong>あなたの一票は本当に大切です！</strong></p>
                     <ul>
                         <li>投票率が低いと、少数の人の意見だけで決まってしまう</li>
