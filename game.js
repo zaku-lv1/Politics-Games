@@ -188,9 +188,9 @@ function initializeAllScenarios() {
 function initializeScenarios() {
     initializeAllScenarios();
     
-    // Shuffle and select 3 random scenarios using Fisher-Yates
+    // Shuffle and select 5 random scenarios using Fisher-Yates
     const shuffled = shuffleArray(allScenarios);
-    gameScenarios = shuffled.slice(0, 3);
+    gameScenarios = shuffled.slice(0, 5);
 }
 
 function startGame() {
@@ -458,84 +458,191 @@ function showFinalScreen() {
     const votedCount = votingHistory.filter(v => v !== 'abstain').length;
     const totalRounds = gameScenarios.length;
     
-    // Check if any bad parties won during the game
-    let badPartyVoteCount = 0;
+    // Count votes by ideology
+    let ideologyCounts = {
+        progressive: 0,    // 未来進歩党
+        'youth-focused': 0,  // 若者第一党
+        environmental: 0,  // 環境保護党
+        centrist: 0,       // 中道改革党
+        'welfare-focused': 0, // 福祉充実党
+        conservative: 0,   // 伝統保守党
+        bad: 0,            // 悪い政党
+        abstain: 0         // 棄権
+    };
+    
     votingHistory.forEach(vote => {
-        const party = POLITICAL_PARTIES.find(p => p.id === vote);
-        if (party && party.isBad) {
-            badPartyVoteCount++;
+        if (vote === 'abstain') {
+            ideologyCounts.abstain++;
+        } else {
+            const party = POLITICAL_PARTIES.find(p => p.id === vote);
+            if (party) {
+                if (party.isBad) {
+                    ideologyCounts.bad++;
+                } else {
+                    ideologyCounts[party.ideology]++;
+                }
+            }
         }
     });
     
-    // Calculate good party votes
-    const goodPartyVotes = votingHistory.filter(v => {
-        if (v === 'abstain') return false;
-        const party = POLITICAL_PARTIES.find(p => p.id === v);
-        return party && !party.isBad;
-    }).length;
-    
     let finalMessage = '';
-    let messageClass = '';
     let endingType = '';
+    let endingClass = '';
 
-    // Determine ending type
-    if (badPartyVoteCount > 0 || votedCount === 0) {
-        // BAD END
-        endingType = 'バッドエンド';
+    // Determine ending based on voting patterns
+    // Priority: Bad votes > Abstain > Specific ideologies
+    
+    if (ideologyCounts.bad > 0) {
+        // 混沌のエンド - Voted for bad parties
+        endingType = '混沌のエンド';
+        endingClass = 'bad';
         finalMessage = `
             <div class="outcome-message bad">
                 <h3><i class="fas fa-skull-crossbones"></i> ${endingType}</h3>
-                <p><strong>社会が暗い方向に進んでしまいました...</strong></p>
-                ${badPartyVoteCount > 0 ? '<p>危険な政党に投票したことで、市民の自由が脅かされています。</p>' : ''}
-                ${votedCount === 0 ? '<p>一度も投票しなかったため、悪意ある勢力が台頭してしまいました。</p>' : ''}
-                <p class="warning">投票は社会を守る重要な権利です。もう一度プレイして、より良い未来を目指しましょう！</p>
+                <p><strong>社会が混沌に陥ってしまいました...</strong></p>
+                <p>危険な政党への投票により、透明性が失われ、市民の自由が脅かされています。</p>
+                <p>監視社会が構築され、言論の自由が制限されつつあります。</p>
+                <p class="warning">⚠️ 投票は慎重に。政党の政策をしっかり見極めることが重要です。</p>
+                <p><strong>もう一度プレイして、より良い未来を目指しましょう！</strong></p>
             </div>
         `;
-    } else if (votedCount === 1) {
-        // NORMAL END (but not good)
-        endingType = 'ノーマルエンド';
+    } else if (votedCount === 0) {
+        // 無関心エンド - Never voted
+        endingType = '無関心エンド';
+        endingClass = 'bad';
+        finalMessage = `
+            <div class="outcome-message bad">
+                <h3><i class="fas fa-user-slash"></i> ${endingType}</h3>
+                <p><strong>あなたは一度も投票しませんでした...</strong></p>
+                <p>無関心は、悪意ある勢力に力を与えてしまいます。</p>
+                <p>投票しなかったことで、社会は望ましくない方向に進んでしまいました。</p>
+                <p class="warning">⚠️ 「どうせ変わらない」という無関心が、最も危険な選択です。</p>
+                <p><strong>次は勇気を出して投票してみましょう！</strong></p>
+            </div>
+        `;
+    } else if (votedCount < 3) {
+        // 中途半端エンド - Voted only 1-2 times
+        endingType = '中途半端エンド';
+        endingClass = 'neutral';
         finalMessage = `
             <div class="outcome-message neutral">
                 <h3><i class="fas fa-face-meh"></i> ${endingType}</h3>
-                <p>あなたは${votedCount}/${totalRounds}回だけ投票しました。</p>
-                <p>参加することは素晴らしいですが、もっと積極的に政治に関わることで、より良い社会を作ることができます。</p>
-                <p><strong>次回はすべての選挙で投票してみましょう！</strong></p>
-            </div>
-        `;
-    } else if (votedCount === 2) {
-        // GOOD END
-        endingType = 'グッドエンド';
-        finalMessage = `
-            <div class="outcome-message good">
-                <h3><i class="fas fa-thumbs-up"></i> ${endingType}</h3>
-                <p>あなたは${votedCount}/${totalRounds}回投票しました！</p>
-                <p>積極的に社会に参加する姿勢は素晴らしいです。あなたの声が政治に届いています。</p>
-                <p><strong>次はパーフェクトを目指してみましょう！</strong></p>
-            </div>
-        `;
-    } else if (votedCount === totalRounds && goodPartyVotes === totalRounds) {
-        // HAPPY END (Perfect!)
-        endingType = 'ハッピーエンド';
-        finalMessage = `
-            <div class="outcome-message good happy-end">
-                <h3><i class="fas fa-trophy"></i> ${endingType}！<i class="fas fa-star"></i></h3>
-                <p><strong>完璧です！あなたは全てのラウンドで投票し、社会を良い方向に導きました！</strong></p>
-                <p>町は活気に満ち、人々は希望を持って暮らしています。これもあなたの一票があったからこそです。</p>
-                <p class="highlight">✨ あなたのような市民がいれば、未来は明るい！✨</p>
-                <p><strong>実際の選挙でも、ぜひこの情熱を持って投票に行ってください！</strong></p>
+                <p>あなたは${votedCount}/${totalRounds}回しか投票しませんでした。</p>
+                <p>参加することは素晴らしいですが、継続的な関心が社会を変える力になります。</p>
+                <p>もっと積極的に政治に関わることで、より良い社会を作ることができます。</p>
+                <p><strong>次回はもっと多くの選挙で投票してみましょう！</strong></p>
             </div>
         `;
     } else {
-        // Voted all rounds but mixed results
-        endingType = 'グッドエンド';
-        finalMessage = `
-            <div class="outcome-message good">
-                <h3><i class="fas fa-star"></i> ${endingType}！</h3>
-                <p>素晴らしい！あなたは全てのラウンドで投票しました！</p>
-                <p>投票することで、社会に参加し、未来を作ることができます。</p>
-                <p><strong>実際の選挙でも、ぜひ投票に行ってください！</strong></p>
-            </div>
-        `;
+        // 全てのラウンドで投票した場合 - イデオロギーに基づくエンディング
+        const maxIdeology = Object.keys(ideologyCounts)
+            .filter(k => k !== 'bad' && k !== 'abstain')
+            .reduce((a, b) => ideologyCounts[a] > ideologyCounts[b] ? a : b);
+        
+        const maxCount = ideologyCounts[maxIdeology];
+        const hasConsistentChoice = maxCount >= 3; // 3回以上同じイデオロギーに投票
+        
+        if (hasConsistentChoice) {
+            // 特定のイデオロギーに一貫して投票した場合の専用エンディング
+            switch(maxIdeology) {
+                case 'progressive':
+                    endingType = '革新の未来エンド';
+                    endingClass = 'good';
+                    finalMessage = `
+                        <div class="outcome-message good happy-end">
+                            <h3><i class="fas fa-rocket"></i> ${endingType} <i class="fas fa-star"></i></h3>
+                            <p><strong>素晴らしい！あなたは革新的な未来を選択しました！</strong></p>
+                            <p>IT産業が発展し、若者の雇用が増加しています。再生可能エネルギーへの移行が進み、教育の無償化により誰もが学べる社会が実現しました。</p>
+                            <p class="highlight">✨ テクノロジーと教育で、町は輝かしい未来へ！✨</p>
+                            <p><strong>進歩的な政策が、持続可能な発展をもたらします。</strong></p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'youth-focused':
+                    endingType = '若者の力エンド';
+                    endingClass = 'good';
+                    finalMessage = `
+                        <div class="outcome-message good happy-end">
+                            <h3><i class="fas fa-users"></i> ${endingType} <i class="fas fa-star"></i></h3>
+                            <p><strong>完璧です！若者の声が政治を変えました！</strong></p>
+                            <p>学生ローンが免除され、起業支援により新しいビジネスが次々と生まれています。深夜交通網の拡充で、若者が活動しやすい環境が整いました。</p>
+                            <p class="highlight">✨ 若者が主役の、活気ある社会が実現！✨</p>
+                            <p><strong>あなたの世代が、未来を創造する力を持っています！</strong></p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'environmental':
+                    endingType = '環境保護エンド';
+                    endingClass = 'good';
+                    finalMessage = `
+                        <div class="outcome-message good happy-end">
+                            <h3><i class="fas fa-leaf"></i> ${endingType} <i class="fas fa-star"></i></h3>
+                            <p><strong>素晴らしい！地球に優しい社会が実現しました！</strong></p>
+                            <p>自然保護区が拡大され、プラスチックの使用が大幅に削減されました。有機農業が推進され、町はカーボンニュートラルを達成しました。</p>
+                            <p class="highlight">✨ 緑豊かな、持続可能な未来へ！✨</p>
+                            <p><strong>環境を守ることが、次世代への最高の贈り物です！</strong></p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'centrist':
+                    endingType = 'バランス重視エンド';
+                    endingClass = 'good';
+                    finalMessage = `
+                        <div class="outcome-message good happy-end">
+                            <h3><i class="fas fa-balance-scale"></i> ${endingType} <i class="fas fa-star"></i></h3>
+                            <p><strong>完璧です！バランスの取れた社会が実現しました！</strong></p>
+                            <p>段階的な改革により、予算配分が最適化されました。全世代型社会保障が整備され、持続可能な経済成長が達成されています。</p>
+                            <p class="highlight">✨ 極端に偏らない、安定した発展の道へ！✨</p>
+                            <p><strong>中道の知恵が、社会の調和を生み出しました！</strong></p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'welfare-focused':
+                    endingType = '福祉社会エンド';
+                    endingClass = 'good';
+                    finalMessage = `
+                        <div class="outcome-message good happy-end">
+                            <h3><i class="fas fa-heart"></i> ${endingType} <i class="fas fa-star"></i></h3>
+                            <p><strong>素晴らしい！誰もが安心して暮らせる社会が実現しました！</strong></p>
+                            <p>医療費が完全無料化され、高齢者福祉が充実しています。子育て支援金の増額により、安心して子育てができる環境が整い、障がい者支援も強化されました。</p>
+                            <p class="highlight">✨ 温かい心が溢れる、支え合いの社会へ！✨</p>
+                            <p><strong>福祉の充実が、すべての人に笑顔をもたらします！</strong></p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'conservative':
+                    endingType = '伝統重視エンド';
+                    endingClass = 'good';
+                    finalMessage = `
+                        <div class="outcome-message good happy-end">
+                            <h3><i class="fas fa-landmark"></i> ${endingType} <i class="fas fa-star"></i></h3>
+                            <p><strong>完璧です！伝統と秩序が守られた社会が実現しました！</strong></p>
+                            <p>伝統文化が保護され、財政が健全化されています。既存インフラが適切に維持され、治安が強化されることで、安全で秩序ある町になりました。</p>
+                            <p class="highlight">✨ 歴史と伝統を大切にする、安定した社会へ！✨</p>
+                            <p><strong>伝統の価値が、次世代に受け継がれています！</strong></p>
+                        </div>
+                    `;
+                    break;
+            }
+        } else {
+            // 多様な投票をした場合の汎用グッドエンディング
+            endingType = '多様性尊重エンド';
+            endingClass = 'good';
+            finalMessage = `
+                <div class="outcome-message good">
+                    <h3><i class="fas fa-star"></i> ${endingType}</h3>
+                    <p><strong>素晴らしい！あなたは全てのラウンドで投票しました！</strong></p>
+                    <p>様々な政党に投票することで、多角的な視点から政治を考えることができました。</p>
+                    <p>一つのイデオロギーに固執せず、状況に応じて柔軟に判断する姿勢は大切です。</p>
+                    <p><strong>投票を続けることで、社会はより良い方向に進みます！</strong></p>
+                </div>
+            `;
+        }
     }
 
     document.getElementById('final-message').innerHTML = finalMessage;
