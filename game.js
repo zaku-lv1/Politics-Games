@@ -801,27 +801,29 @@ function showFinalScreen() {
                         `;
                         break;
                 }
-            } else if (maxCount === 3 && validIdeologies.length === 1) {
-                // Moderate consistency with abstentions
-                endingNumber = 13;
-                endingTitle = '揺らぐ信念';
-                endingClass = 'neutral';
-                finalMessage = `
-                    <div class="outcome-message neutral">
-                        <h3><i class="fas fa-question"></i> ED${endingNumber}: ${endingTitle}</h3>
-                        <p>一つの方向性を持ちながらも、時々投票を棄権してしまいました。</p>
-                        <p>信念を持つことは大切ですが、継続的な参加がなければその効果は限定的です。</p>
-                        <p><strong>次回は全てのラウンドで投票して、より大きな影響を！</strong></p>
-                    </div>
-                `;
             } else {
                 // Multiple ideologies supported - Check for interesting combinations
                 const sortedIdeologies = validIdeologies.sort((a, b) => ideologyCounts[b] - ideologyCounts[a]);
                 const topTwo = sortedIdeologies.slice(0, 2);
+                const maxCount = ideologyCounts[sortedIdeologies[0]];
                 
+                // Check for moderate consistency with abstentions (3 votes for one ideology)
+                if (maxCount === 3 && validIdeologies.length === 1) {
+                    endingNumber = 13;
+                    endingTitle = '揺らぐ信念';
+                    endingClass = 'neutral';
+                    finalMessage = `
+                        <div class="outcome-message neutral">
+                            <h3><i class="fas fa-question"></i> ED${endingNumber}: ${endingTitle}</h3>
+                            <p>一つの方向性を持ちながらも、時々投票を棄権してしまいました。</p>
+                            <p>信念を持つことは大切ですが、継続的な参加がなければその効果は限定的です。</p>
+                            <p><strong>次回は全てのラウンドで投票して、より大きな影響を！</strong></p>
+                        </div>
+                    `;
+                }
                 // Check for specific ideology combinations
-                if (topTwo.includes('progressive') && topTwo.includes('environmental')) {
-                    endingNumber = 7;
+                else if (topTwo.includes('progressive') && topTwo.includes('environmental')) {
+                    endingNumber = 21;
                     endingTitle = 'サステナブル革新';
                     endingClass = 'good';
                     finalMessage = `
@@ -833,7 +835,7 @@ function showFinalScreen() {
                         </div>
                     `;
                 } else if (topTwo.includes('youth-focused') && topTwo.includes('progressive')) {
-                    endingNumber = 8;
+                    endingNumber = 22;
                     endingTitle = '若き革新者たち';
                     endingClass = 'good';
                     finalMessage = `
@@ -845,7 +847,7 @@ function showFinalScreen() {
                         </div>
                     `;
                 } else if (topTwo.includes('welfare-focused') && topTwo.includes('centrist')) {
-                    endingNumber = 9;
+                    endingNumber = 23;
                     endingTitle = '思いやりと現実主義';
                     endingClass = 'good';
                     finalMessage = `
@@ -858,7 +860,7 @@ function showFinalScreen() {
                     `;
                 } else {
                     // Generic diversity ending
-                    endingNumber = 13;
+                    endingNumber = 24;
                     endingTitle = '多様性の尊重';
                     endingClass = 'good';
                     finalMessage = `
