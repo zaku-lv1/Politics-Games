@@ -4,6 +4,9 @@ let votingHistory = [];
 let gameScenarios = [];
 let allScenarios = [];
 
+// Game configuration constants
+const CONSISTENCY_THRESHOLD = 0.6; // Need 60% of votes for same ideology to get specialized ending
+
 // Fisher-Yates shuffle algorithm for proper randomization
 function shuffleArray(array) {
     const shuffled = [...array];
@@ -520,8 +523,8 @@ function showFinalScreen() {
                 <p><strong>次は勇気を出して投票してみましょう！</strong></p>
             </div>
         `;
-    } else if (votedCount < Math.ceil(totalRounds * 0.6)) {
-        // 中途半端エンド - Voted less than 60% of rounds
+    } else if (votedCount < Math.ceil(totalRounds * CONSISTENCY_THRESHOLD)) {
+        // 中途半端エンド - Voted less than threshold of rounds
         endingType = '中途半端エンド';
         endingClass = 'neutral';
         finalMessage = `
@@ -535,12 +538,29 @@ function showFinalScreen() {
         `;
     } else {
         // 全てのラウンドで投票した場合 - イデオロギーに基づくエンディング
-        const maxIdeology = Object.keys(ideologyCounts)
-            .filter(k => k !== 'bad' && k !== 'abstain')
-            .reduce((a, b) => ideologyCounts[a] > ideologyCounts[b] ? a : b);
+        const validIdeologies = Object.keys(ideologyCounts)
+            .filter(k => k !== 'bad' && k !== 'abstain' && ideologyCounts[k] > 0);
         
-        const maxCount = ideologyCounts[maxIdeology];
-        const hasConsistentChoice = maxCount >= Math.ceil(totalRounds * 0.6); // 60% or more of rounds
+        // Safety check: ensure we have at least one valid ideology
+        if (validIdeologies.length === 0) {
+            // Fallback to diversity ending if no valid ideologies (shouldn't happen in normal play)
+            endingType = '多様性尊重エンド';
+            endingClass = 'good';
+            finalMessage = `
+                <div class="outcome-message good">
+                    <h3><i class="fas fa-star"></i> ${endingType}</h3>
+                    <p><strong>素晴らしい！あなたは全てのラウンドで投票しました！</strong></p>
+                    <p>投票することで、社会に参加し、未来を作ることができます。</p>
+                    <p><strong>実際の選挙でも、ぜひ投票に行ってください！</strong></p>
+                </div>
+            `;
+        } else {
+            const maxIdeology = validIdeologies.reduce((a, b) => 
+                ideologyCounts[a] > ideologyCounts[b] ? a : b
+            );
+            
+            const maxCount = ideologyCounts[maxIdeology];
+            const hasConsistentChoice = maxCount >= Math.ceil(totalRounds * CONSISTENCY_THRESHOLD); // threshold or more of rounds
         
         if (hasConsistentChoice) {
             // 特定のイデオロギーに一貫して投票した場合の専用エンディング
@@ -629,19 +649,20 @@ function showFinalScreen() {
                     `;
                     break;
             }
-        } else {
-            // 多様な投票をした場合の汎用グッドエンディング
-            endingType = '多様性尊重エンド';
-            endingClass = 'good';
-            finalMessage = `
-                <div class="outcome-message good">
-                    <h3><i class="fas fa-star"></i> ${endingType}</h3>
-                    <p><strong>素晴らしい！あなたは全てのラウンドで投票しました！</strong></p>
-                    <p>様々な政党に投票することで、多角的な視点から政治を考えることができました。</p>
-                    <p>一つのイデオロギーに固執せず、状況に応じて柔軟に判断する姿勢は大切です。</p>
-                    <p><strong>投票を続けることで、社会はより良い方向に進みます！</strong></p>
-                </div>
-            `;
+            } else {
+                // 多様な投票をした場合の汎用グッドエンディング
+                endingType = '多様性尊重エンド';
+                endingClass = 'good';
+                finalMessage = `
+                    <div class="outcome-message good">
+                        <h3><i class="fas fa-star"></i> ${endingType}</h3>
+                        <p><strong>素晴らしい！あなたは全てのラウンドで投票しました！</strong></p>
+                        <p>様々な政党に投票することで、多角的な視点から政治を考えることができました。</p>
+                        <p>一つのイデオロギーに固執せず、状況に応じて柔軟に判断する姿勢は大切です。</p>
+                        <p><strong>投票を続けることで、社会はより良い方向に進みます！</strong></p>
+                    </div>
+                `;
+            }
         }
     }
 
